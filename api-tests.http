@@ -1,0 +1,182 @@
+### Pet Store API Tests
+### Make sure your server is running on http://localhost:3000
+### You can run each request by clicking "Send Request" above each ###
+
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+
+### 1. Create a Pet (POST /api/pets)
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Fluffy",
+  "species": "Cat",
+  "age": 2,
+  "price": 150
+}
+
+### 2. Create another Pet for testing
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Buddy",
+  "species": "Dog",
+  "age": 3,
+  "price": 200
+}
+
+### 3. Create a third Pet
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Charlie",
+  "species": "Bird",
+  "age": 1,
+  "price": 75
+}
+
+### 4. Get All Pets (GET /api/pets)
+GET {{baseUrl}}/pets
+
+### 5. Get Pet by ID (GET /api/pets/:id)
+### Replace {petId} with an actual ID from the previous request
+GET {{baseUrl}}/pets/{petId}
+
+### 6. Update Pet (PUT /api/pets/:id)
+### Replace {petId} with an actual ID
+PUT {{baseUrl}}/pets/{petId}
+Content-Type: {{contentType}}
+
+{
+  "name": "Fluffy Updated",
+  "species": "Persian Cat",
+  "age": 3,
+  "price": 180
+}
+
+### 7. Partial Update Pet (PUT /api/pets/:id)
+### You can update only specific fields
+PUT {{baseUrl}}/pets/{petId}
+Content-Type: {{contentType}}
+
+{
+  "price": 160
+}
+
+### 8. Get Available Pets from Store (GET /api/store/pets)
+GET {{baseUrl}}/store/pets
+
+### 9. Checkout with Pet IDs (POST /api/store/checkout)
+### Replace the IDs in the array with actual pet IDs
+POST {{baseUrl}}/store/checkout
+Content-Type: {{contentType}}
+
+{
+  "petIds": ["{petId1}", "{petId2}"]
+}
+
+### 10. Test Checkout with invalid Pet IDs
+POST {{baseUrl}}/store/checkout
+Content-Type: {{contentType}}
+
+{
+  "petIds": ["nonexistent1", "nonexistent2"]
+}
+
+### 11. Test Checkout with malformed request
+POST {{baseUrl}}/store/checkout
+Content-Type: {{contentType}}
+
+{
+  "invalidField": ["test"]
+}
+
+### 12. Get Pet with invalid ID (should return 404)
+GET {{baseUrl}}/pets/invalidId123
+
+### 13. Update Pet with invalid ID (should return 404)
+PUT {{baseUrl}}/pets/invalidId123
+Content-Type: {{contentType}}
+
+{
+  "name": "Test"
+}
+
+### 14. Delete Pet (DELETE /api/pets/:id)
+### Replace {petId} with an actual ID
+DELETE {{baseUrl}}/pets/{petId}
+
+### 15. Try to get deleted Pet (should return 404)
+GET {{baseUrl}}/pets/{petId}
+
+### 16. Create Pet with missing required fields (should return 400)
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Incomplete Pet"
+}
+
+### 17. Create Pet with invalid data types
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Test Pet",
+  "species": "Dog",
+  "age": "invalid_age",
+  "price": "invalid_price"
+}
+
+### 18. Test server health (if you want to add a health endpoint)
+GET {{baseUrl}}/health
+
+### 19. Test non-existent endpoint
+GET {{baseUrl}}/nonexistent
+
+### 20. Bulk operations test - Create multiple pets and then checkout
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Pet 1",
+  "species": "Cat",
+  "age": 1,
+  "price": 100
+}
+
+###
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Pet 2",
+  "species": "Dog",
+  "age": 2,
+  "price": 150
+}
+
+###
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Pet 3",
+  "species": "Rabbit",
+  "age": 1,
+  "price": 80
+}
+
+### Get all pets to see the IDs for checkout
+GET {{baseUrl}}/pets
+
+### Now use the IDs from above for checkout
+POST {{baseUrl}}/store/checkout
+Content-Type: {{contentType}}
+
+{
+  "petIds": ["REPLACE_WITH_ACTUAL_ID_1", "REPLACE_WITH_ACTUAL_ID_2"]
+}

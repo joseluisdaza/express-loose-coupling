@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pet Store API Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .endpoint {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .response {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .form-group {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Pet Store API Test Interface</h1>
+
+    <!-- Pet Endpoints -->
+    <div class="endpoint">
+      <h3>1. Create a Pet (POST /api/pets)</h3>
+      <div class="form-group">
+        <input type="text" id="petName" placeholder="Pet Name" value="Fluffy">
+      </div>
+      <div class="form-group">
+        <input type="text" id="petSpecies" placeholder="Species" value="Cat">
+      </div>
+      <div class="form-group">
+        <input type="number" id="petAge" placeholder="Age" value="2">
+      </div>
+      <div class="form-group">
+        <input type="number" id="petPrice" placeholder="Price" value="150">
+      </div>
+      <button onclick="createPet()">Create Pet</button>
+      <div class="response" id="createPetResponse"></div>
+    </div>
+
+    <div class="endpoint">
+      <h3>2. Get All Pets (GET /api/pets)</h3>
+      <button onclick="getAllPets()">Get All Pets</button>
+      <div class="response" id="getAllPetsResponse"></div>
+    </div>
+
+    <div class="endpoint">
+      <h3>3. Get Pet by ID (GET /api/pets/:id)</h3>
+      <input type="text" id="getPetId" placeholder="Pet ID">
+      <button onclick="getPetById()">Get Pet</button>
+      <div class="response" id="getPetByIdResponse"></div>
+    </div>
+
+    <div class="endpoint">
+      <h3>4. Update Pet (PUT /api/pets/:id)</h3>
+      <input type="text" id="updatePetId" placeholder="Pet ID">
+      <input type="text" id="updatePetName" placeholder="New Name">
+      <input type="text" id="updatePetSpecies" placeholder="New Species">
+      <input type="number" id="updatePetAge" placeholder="New Age">
+      <input type="number" id="updatePetPrice" placeholder="New Price">
+      <button onclick="updatePet()">Update Pet</button>
+      <div class="response" id="updatePetResponse"></div>
+    </div>
+
+    <div class="endpoint">
+      <h3>5. Delete Pet (DELETE /api/pets/:id)</h3>
+      <input type="text" id="deletePetId" placeholder="Pet ID">
+      <button onclick="deletePet()">Delete Pet</button>
+      <div class="response" id="deletePetResponse"></div>
+    </div>
+
+    <!-- Store Endpoints -->
+    <div class="endpoint">
+      <h3>6. Get Available Pets (GET /api/store/pets)</h3>
+      <button onclick="getAvailablePets()">Get Available Pets</button>
+      <div class="response" id="getAvailablePetsResponse"></div>
+    </div>
+
+    <div class="endpoint">
+      <h3>7. Checkout (POST /api/store/checkout)</h3>
+      <textarea id="checkoutPetIds" placeholder='Enter Pet IDs as JSON array: ["id1", "id2"]'></textarea>
+      <button onclick="checkout()">Checkout</button>
+      <div class="response" id="checkoutResponse"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000/api';
+
+    async function makeRequest(url, method = 'GET', body = null) {
+      try {
+        const options = {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        };
+
+        if (body) {
+          options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        return {
+          status: response.status,
+          data: data
+        };
+      } catch (error) {
+        return {
+          status: 'Error',
+          data: { message: error.message }
+        };
+      }
+    }
+
+    async function createPet() {
+      const pet = {
+        name: document.getElementById('petName').value,
+        species: document.getElementById('petSpecies').value,
+        age: parseInt(document.getElementById('petAge').value),
+        price: parseFloat(document.getElementById('petPrice').value)
+      };
+
+      const result = await makeRequest(`${API_BASE}/pets`, 'POST', pet);
+      document.getElementById('createPetResponse').textContent =
+        `Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}`;
+    }
+
+    async function getAllPets() {
+      const result = await makeRequest(`${API_BASE}/pets`);
+      document.getElementById('getAllPetsResponse').textContent =
+        `Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}`;
+    }
+
+    async function getPetById() {
+      const id = document.getElementById('getPetId').value;
+      if (!id) {
+        alert('Please enter a Pet ID');
+        return;
+      }
+
+      const result = await makeRequest(`${API_BASE}/pets/${id}`);
+      document.getElementById('getPetByIdResponse').textContent =
+        `Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}`;
+    }
+
+    async function updatePet() {
+      const id = document.getElementById('updatePetId').value;
+      if (!id) {
+        alert('Please enter a Pet ID');
+        return;
+      }
+
+      const updates = {};
+      const name = document.getElementById('updatePetName').value;
+      const species = document.getElementById('updatePetSpecies').value;
+      const age = document.getElementById('updatePetAge').value;
+      const price = document.getElementById('updatePetPrice').value;
+
+      if (name) updates.name = name;
+      if (species) updates.species = species;
+      if (age) updates.age = parseInt(age);
+      if (price) updates.price = parseFloat(price);
+
+      const result = await makeRequest(`${API_BASE}/pets/${id}`, 'PUT', updates);
+      document.getElementById('updatePetResponse').textContent =
+        `Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}`;
+    }
+
+    async function deletePet() {
+      const id = document.getElementById('deletePetId').value;
+      if (!id) {
+        alert('Please enter a Pet ID');
+        return;
+      }
+
+      const result = await makeRequest(`${API_BASE}/pets/${id}`, 'DELETE');
+      document.getElementById('deletePetResponse').textContent =
+        `Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}`;
+    }
+
+    async function getAvailablePets() {
+      const result = await makeRequest(`${API_BASE}/store/pets`);
+      document.getElementById('getAvailablePetsResponse').textContent =
+        `Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}`;
+    }
+
+    async function checkout() {
+      const petIdsText = document.getElementById('checkoutPetIds').value;
+      if (!petIdsText) {
+        alert('Please enter Pet IDs as JSON array');
+        return;
+      }
+
+      try {
+        const petIds = JSON.parse(petIdsText);
+        const result = await makeRequest(`${API_BASE}/store/checkout`, 'POST', { petIds });
+        document.getElementById('checkoutResponse').textContent =
+          `Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}`;
+      } catch (error) {
+        document.getElementById('checkoutResponse').textContent =
+          `Error: Invalid JSON format`;
+      }
+    }
+  </script>
+</body>
+
+</html>
