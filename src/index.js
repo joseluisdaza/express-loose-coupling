@@ -5,11 +5,11 @@ const mongoose = require("mongoose");
 
 //Imports when using layers architecture
 //const petRoutes = require("./layers/routes/pets");
-const storeRoutes = require("./layers/routes/store");
+// const storeRoutes = require("./layers/routes/store");
 
 //Imports when using hexagonal architecture
 // const petRoutes = require("../infrastructure/routes/pets");
-const petRoutes = require("./infrastructure/routes/pets");
+const petRoutes = require("./infrastructure/routes/Pets");
 dotenv.config();
 
 const app = express();
@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/pets", petRoutes);
-app.use("/api/store", storeRoutes);
+// app.use("/api/store", storeRoutes);
 
 const PORT = process.env.PORT || 3000;
 

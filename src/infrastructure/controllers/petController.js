@@ -1,6 +1,5 @@
 const PetService = require("../../application/services/PetService");
-// const MongoPetRepository = require("../repositories/MongoPetRepository");
-const MongoPetRepository = require("./repositories/mongoPetRepository");
+const MongoPetRepository = require("../repositories/mongoPetRepository");
 
 // Initialize dependencies
 const petRepository = new MongoPetRepository();
